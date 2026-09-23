@@ -5,25 +5,31 @@ Deploy the contents of `dist` as the website's public root. The whole directory 
 - `/` serves `dist/index.html`, the plain menu of apps.
 - `/janaza` serves `dist/janaza/index.html`. Directory-index hosting may normalize this to `/janaza/`.
 
-For Cloudflare Pages Direct Upload, upload the `dist` folder or a ZIP of its contents. The homepage must be at the upload root. There is no build, server, database, or API to configure.
+The site is deployed as static assets on Cloudflare Workers. There is no build, application server, database, or API to configure.
 
 The homepage uses system fonts. The Janaza page contains its own styles and JavaScript and loads Google Fonts with system fallbacks.
 
-## Cloudflare Pages with GitHub
+## Cloudflare Workers with GitHub
 
 The deployment repository is `bzannah/remindme`. The `janazah-guide` folder contains ordinary tracked files; it is not a Git submodule.
 
 Use these build settings:
 
 - Production branch: `main`
-- Framework preset: `None`
-- Root directory: `janazah-guide`
-- Build command: `exit 0`
-- Build output directory: `dist`
+- Worker name: `remindme`
+- Root directory: `/` (the repository root)
+- Build command: leave empty
+- Deploy command: `npx wrangler deploy`
 
-If the root directory is left blank, use `janazah-guide/dist` as the build output directory instead.
+The root `wrangler.jsonc` selects `./janazah-guide/dist` as the assets directory. It deploys both the homepage and every app route together. No Worker script is needed.
 
-See [Cloudflare's static HTML guide](https://developers.cloudflare.com/pages/framework-guides/deploy-anything/).
+For a local configuration check, run `npx wrangler deploy --dry-run` from the repository root.
+
+See [Cloudflare's static assets guide](https://developers.cloudflare.com/workers/static-assets/).
+
+## Alternative: Cloudflare Pages Direct Upload
+
+Upload the `dist` folder or a ZIP of its contents. The homepage must be at the upload root. The Workers configuration is not needed for this alternative.
 
 ## Adding another app
 
